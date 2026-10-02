@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fênix Fono 1.0</title>
+<style>
+:root{--bg:#f3f6fa;--card:#fff;--ink:#14213d;--mut:#5b6b85;--line:#d9e1ec;--acc:#e8870e;--acc2:#0d8f84;--ok:#0d8f84;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1626;--card:#16223a;--ink:#eaf0fa;--mut:#98a8c4;--line:#27375a;--acc:#f5a03a;--acc2:#35c2b4;--ok:#35c2b4}}
+:root[data-theme="dark"]{--bg:#0e1626;--card:#16223a;--ink:#eaf0fa;--mut:#98a8c4;--line:#27375a;--acc:#f5a03a;--acc2:#35c2b4;--ok:#35c2b4}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:1.5rem;margin:0 0 2px;letter-spacing:-.01em}
+.sub{color:var(--mut);margin:0 0 16px}
+nav{display:flex;gap:6px;margin-bottom:16px}
+nav button{flex:1;padding:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font:inherit;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.texto{font-size:1.2rem;line-height:1.75;margin:0}
+.btn{display:inline-block;padding:12px 22px;border:0;border-radius:999px;background:var(--acc);color:#1b1100;font:inherit;font-weight:700;cursor:pointer}
+.btn.sec{background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:400}
+button:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
+canvas{width:100%;height:150px;display:block;background:var(--bg);border-radius:10px}
+.vol{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:10px 0}
+.vol i{display:block;height:100%;width:0;background:var(--acc2)}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;font-weight:400}
+th{color:var(--mut);font-size:.85rem}
+td:not(:first-child),th:not(:first-child){text-align:right}
+.msg{margin:12px 0 0;color:var(--ink)}
+.nota{color:var(--mut);font-size:.88rem;margin:8px 0 0}
+.erro{color:#c0392b}
+.resp{display:flex;flex-direction:column;align-items:center;gap:14px;padding:10px 0}
+.orb{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--acc2),var(--ink));transform:scale(.55);opacity:.9}
+.fase{font-size:1.4rem;font-weight:700;min-height:2rem}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){.orb{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h1>Fênix Fono 1.0</h1>
+<p class="sub">Treino de voz e leitura. Você compete só com a sua última vez.</p>
+<nav role="tablist">
+<button role="tab" id="t1" aria-selected="true">Leitura</button>
+<button role="tab" id="t2" aria-selected="false">Respiração</button>
+</nav>
+
+<section id="p1">
+<div class="card"><p class="texto" id="txt">O sol nasceu devagar sobre a cidade. Os pássaros começaram a cantar, e todo mundo acordou com um sorriso. Era o começo de um novo dia.</p></div>
+<div class="card">
+<button class="btn" id="rec">Gravar leitura</button>
+<div class="vol"><i id="lv"></i></div>
+<canvas id="cv" width="600" height="150" aria-label="Curva do tom da sua voz"></canvas>
+<p class="nota" id="st">Leia o texto em voz alta, no seu ritmo. Aparece a curva do tom em tempo real.</p>
+</div>
+<div class="card" id="res" hidden>
+<table><thead><tr><th>Medida</th><th>Agora</th><th>Última vez</th></tr></thead><tbody id="tb"></tbody></table>
+<p class="msg" id="fb"></p>
+<p class="nota">Estimativas feitas no seu aparelho. Não substituem a avaliação de um fonoaudiólogo.</p>
+</div>
+<div class="card" id="trcard" hidden><strong>O que o navegador entendeu</strong><p class="nota" id="tr"></p></div>
+</section>
+
+<section id="p2" hidden>
+<div class="card resp">
+<div class="orb" id="orb"></div>
+<div class="fase" id="fase">Pronto?</div>
+<div class="nota" id="ciclos">Mão na barriga. A barriga sobe ao inspirar.</div>
+<button class="btn" id="rgo">Começar</button>
+<p class="nota">Inspire pelo nariz (4 s) e solte o ar pela boca, devagar (7 s).</p>
+</div>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+// abas
+function aba(n){$('p1').hidden=n!==1;$('p2').hidden=n!==2;$('t1').setAttribute('aria-selected',n===1);$('t2').setAttribute('aria-selected',n===2)}
+$('t1').onclick=()=>aba(1);$('t2').onclick=()=>aba(2);
+
+// ---- gravação e análise ----
+let ctx,an,stream,tick,frames=[],t0,rec,gravando=false,transcr='',sr=null;
+const cv=$('cv'),g=cv.getContext('2d');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function tom(buf,rate){
+  let c0=0;for(let i=0;i<buf.length;i++)c0+=buf[i]*buf[i];
+  const rms=Math.sqrt(c0/buf.length);
+  if(rms<0.012)return{rms,f:0};
+  const min=Math.floor(rate/450),max=Math.floor(rate/70);let best=-1,bc=0;
+  for(let l=min;l<=max;l++){let c=0;for(let i=0;i<buf.length-l;i++)c+=buf[i]*buf[i+l];if(c>bc){bc=c;best=l}}
+  if(best<0||bc/c0<0.45)return{rms,f:0};
+  return{rms,f:rate/best};
+}
+function desenha(){
+  const W=cv.width,H=cv.height;g.clearRect(0,0,W,H);
+  const pts=frames.slice(-200);g.strokeStyle=css('--acc');g.lineWidth=3;g.beginPath();let on=false;
+  pts.forEach((p,i)=>{
+    if(!p.f){on=false;return}
+    const x=i/200*W,y=H-(Math.log2(p.f/70)/Math.log2(450/70))*H;
+    if(!on){g.moveTo(x,y);on=true}else g.lineTo(x,y);
+  });g.stroke();
+}
+async function iniciar(){
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}
+  catch(e){$('st').textContent='Não foi possível usar o microfone. Permita o acesso e abra a página direto no navegador.';$('st').className='nota erro';return}
+  ctx=new (window.AudioContext||window.webkitAudioContext)();
+  const src=ctx.createMediaStreamSource(stream);an=ctx.createAnalyser();an.fftSize=2048;src.connect(an);
+  const buf=new Float32Array(an.fftSize);frames=[];transcr='';t0=performance.now();gravando=true;
+  $('rec').textContent='Parar';$('st').className='nota';$('st').textContent='Gravando... leia com calma.';
+  $('res').hidden=true;$('trcard').hidden=true;
+  tick=setInterval(()=>{an.getFloatTimeDomainData(buf);const r=tom(buf,ctx.sampleRate);
+    frames.push({t:(performance.now()-t0)/1000,rms:r.rms,f:r.f});
+    $('lv').style.width=Math.min(100,r.rms*500)+'%';desenha()},50);
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(SR){try{sr=new SR();sr.lang='pt-BR';sr.continuous=true;sr.interimResults=false;
+    sr.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++)transcr+=e.results[i][0].transcript+' '};
+    sr.onerror=()=>{};sr.start()}catch(e){sr=null}}
+}
+function parar(){
+  gravando=false;clearInterval(tick);if(sr){try{sr.stop()}catch(e){}}
+  stream.getTracks().forEach(t=>t.stop());ctx.close();$('rec').textContent='Gravar de novo';$('lv').style.width='0';
+  setTimeout(analisa,500);
+}
+function analisa(){
+  const dur=frames.length?frames[frames.length-1].t:0;
+  const voz=frames.map(p=>p.rms>0.015);
+  const ini=voz.indexOf(true),fim=voz.lastIndexOf(true);
+  if(ini<0||dur<2){$('st').textContent='Quase não captei voz. Chegue mais perto do microfone e tente de novo.';return}
+  // pausas: silêncio >= 0,4 s entre trechos de fala
+  let pausas=0,run=0;
+  for(let i=ini;i<=fim;i++){if(!voz[i])run++;else{if(run>=8)pausas++;run=0}}
+  const fala=(frames[fim].t-frames[ini].t);
+  // expressividade: variação do tom em semitons
+  const fs=frames.filter(p=>p.f).map(p=>p.f);let expr=0;
+  if(fs.length>10){const m=fs.slice().sort((a,b)=>a-b)[fs.length>>1];
+    const st=fs.map(f=>12*Math.log2(f/m));const mu=st.reduce((a,b)=>a+b,0)/st.length;
+    expr=Math.sqrt(st.reduce((a,b)=>a+(b-mu)**2,0)/st.length)}
+  const pal=transcr.trim()?transcr.trim().split(/\s+/).length:0;
+  const ppm=pal?Math.round(pal/(fala/60)):0;
+  const vol=Math.round(frames.filter((p,i)=>voz[i]).reduce((a,p)=>a+p.rms,0)/voz.filter(Boolean).length*1000)/10;
+  const agora={dur:Math.round(fala),ppm,pausas,expr:Math.round(expr*10)/10,vol};
+  let ant=null;try{ant=JSON.parse(localStorage.getItem('fono_ant'))}catch(e){}
+  const linhas=[['Tempo de fala (s)','dur',''],['Ritmo (palavras/min)','ppm',''],['Pausas','pausas',''],['Expressividade do tom','expr',''],['Volume médio','vol','']];
+  $('tb').innerHTML=linhas.map(([n,k])=>`<tr><td>${n}</td><td>${agora[k]||'—'}</td><td>${ant&&ant[k]?ant[k]:'—'}</td></tr>`).join('');
+  let fb;
+  if(expr<1.5)fb='Seu tom ficou bem uniforme. Na próxima, escolha uma frase para "subir" e outra para "descer" a voz.';
+  else if(expr<3)fb='Boa variação de tom. Tente dar mais ênfase nas palavras importantes.';
+  else fb='Sua leitura teve bastante vida no tom. Agora é refinar as pausas.';
+  if(pausas<2)fb+=' Respire nas vírgulas e nos pontos: duas pausas já fazem diferença.';
+  if(ppm>170)fb+=' O ritmo está acelerado; leia um pouco mais devagar.';
+  else if(ppm&&ppm<90)fb+=' O ritmo está calmo; dá para dar um pouco mais de fluidez.';
+  if(ant&&((expr>ant.expr)||(pausas>ant.pausas)))fb='Você evoluiu em relação à última vez. '+fb;
+  $('fb').textContent=fb;$('res').hidden=false;
+  if(transcr.trim()){$('tr').textContent=transcr.trim();$('trcard').hidden=false}
+  else{$('tr').textContent='Reconhecimento de palavras indisponível neste navegador (use o Chrome para o ritmo em palavras por minuto).';$('trcard').hidden=false}
+  $('st').textContent='Pronto. Veja o resultado abaixo.';
+  try{localStorage.setItem('fono_ant',JSON.stringify(agora))}catch(e){}
+}
+$('rec').onclick=()=>gravando?parar():iniciar();
+
+// ---- respiração ----
+let rodando=false,ciclos=0,tm;
+const orb=$('orb');
+function fase(txt,esc,seg,prox){
+  $('fase').textContent=txt;orb.style.transition=`transform ${seg}s ease-in-out`;orb.style.transform=`scale(${esc})`;
+  tm=setTimeout(prox,seg*1000);
+}
+function ciclo(){
+  if(!rodando)return;
+  fase('Inspire pelo nariz',1.1,4,()=>fase('Solte devagar',.55,7,()=>{ciclos++;$('ciclos').textContent=ciclos+' ciclo'+(ciclos>1?'s':'')+' completo'+(ciclos>1?'s':'');ciclo()}));
+}
+$('rgo').onclick=()=>{
+  rodando=!rodando;$('rgo').textContent=rodando?'Parar':'Começar';
+  if(rodando){ciclos=0;ciclo()}else{clearTimeout(tm);$('fase').textContent=ciclos?'Muito bem!':'Pronto?';orb.style.transform='scale(.55)'}
+};
+</script>
+</body>
+</html>
