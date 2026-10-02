@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fênix Fono 1.6</title>
+<title>Fênix Fono 1.4</title>
 <style>
 :root{--bg:#f3f6fa;--card:#fff;--ink:#14213d;--mut:#5b6b85;--line:#d9e1ec;--acc:#e8870e;--acc2:#0d8f84;--err:#c0392b;--ok:#0d8f84;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1626;--card:#16223a;--ink:#eaf0fa;--mut:#98a8c4;--line:#27375a;--acc:#f5a03a;--acc2:#35c2b4;--err:#ff8a78;--ok:#35c2b4}}
@@ -27,7 +27,7 @@ canvas{width:100%;height:150px;display:block;background:var(--bg);border-radius:
 .vol{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:10px 0}.vol i{display:block;height:100%;width:0;background:var(--acc2)}
 table{width:100%;border-collapse:collapse}td,th{padding:7px 4px;border-bottom:1px solid var(--line);text-align:left;font-weight:400}
 th{color:var(--mut);font-size:.82rem}td:not(:first-child),th:not(:first-child){text-align:right}
-.msg{margin:12px 0 0}.cfg input[type=text],.cfg input[type=password]{width:200px;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}.erro{color:var(--err)}.ar{font-weight:700;margin-left:6px;color:var(--mut)}.ar.ok{color:var(--ok)}.ar.ru{color:var(--err)}.tbl{overflow-x:auto}#sob{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:.92rem}#sob p{margin:0 0 8px}
+.msg{margin:12px 0 0}.erro{color:var(--err)}.ar{font-weight:700;margin-left:6px;color:var(--mut)}.ar.ok{color:var(--ok)}.ar.ru{color:var(--err)}.tbl{overflow-x:auto}#sob{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:.92rem}#sob p{margin:0 0 8px}
 details summary{cursor:pointer;font-weight:700}
 .cfg{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;margin-top:10px}
 .cfg input[type=number],select,textarea{padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
@@ -41,9 +41,9 @@ details summary{cursor:pointer;font-weight:700}
 </head>
 <body>
 <main>
-<h1>Fênix Fono 1.6</h1>
+<h1>Fênix Fono 1.4</h1>
 <p class="sub">Treino de voz e leitura. Você compete só com a sua última vez.</p>
-<nav role="tablist"><button role="tab" id="t1" aria-selected="true">Leitura</button><button role="tab" id="t2" aria-selected="false">Respiração</button><button role="tab" id="t3" aria-selected="false">Conta</button></nav>
+<nav role="tablist"><button role="tab" id="t1" aria-selected="true">Leitura</button><button role="tab" id="t2" aria-selected="false">Respiração</button></nav>
 
 <section id="p1">
 <div class="card"><p class="texto" id="txt"></p>
@@ -51,14 +51,8 @@ details summary{cursor:pointer;font-weight:700}
 <div class="cfg">
 <label for="g1">Tema</label><select id="g1" data-k="gtema"><option>Variado</option><option>Natureza</option><option>Cotidiano</option><option>Tecnologia</option><option>Aventura</option></select>
 <label for="g2">Tamanho em</label><select id="g2" data-k="gmodo"><option value="min">minutos de leitura</option><option value="pal">palavras</option></select>
-<label for="g3">Quantidade</label><input id="g3" type="number" data-k="gval" min="1" max="2000" step="0.5">
-<label for="g4">Nível</label><select id="g4" data-k="gnivel"><option>Criança (6 a 9 anos)</option><option>Pré-adolescente (10 a 13 anos)</option><option>Jovem e adulto</option></select>
-<label for="g5">Tom</label><select id="g5" data-k="gtom"><option>Neutro</option><option>Alegre</option><option>Suspense</option><option>Solene</option></select>
-<label for="g6">Treinar sons ou palavras</label><input id="g6" type="text" data-k="gfoco" placeholder="ex.: R, L, trava-línguas" maxlength="80">
-<label><input type="checkbox" data-k="gerr"> Incluir as palavras que mais errei</label><span></span>
-<label><input type="checkbox" data-k="gia"> Gerar com IA</label><span></span>
-<label for="g7">Endereço da função</label><input id="g7" type="text" data-k="gurl" placeholder="https://...cloudfunctions.net/gerarTexto"></div>
-<p><button class="btn" id="gt">Gerar texto</button></p><p class="nota" id="gi"></p><p class="nota">Com IA, só são enviados tema, tamanho, nível, tom, o foco escrito e as palavras escolhidas. Nunca a sua voz. Sem internet ou sem IA, o app usa o banco de textos.</p>
+<label for="g3">Quantidade</label><input id="g3" type="number" data-k="gval" min="1" max="2000" step="0.5"></div>
+<p><button class="btn" id="gt">Gerar texto</button></p><p class="nota" id="gi"></p>
 <p class="nota" style="margin-top:14px">Ou cole o seu próprio texto:</p>
 <textarea id="ta" aria-label="Texto de leitura"></textarea><p><button class="btn sec" id="ut">Usar este texto</button></p></details></div>
 <div class="card">
@@ -116,37 +110,24 @@ details summary{cursor:pointer;font-weight:700}
 <label for="b7">Volume da música (%)</label><input id="b7" type="range" data-k="vm" min="0" max="200">
 </div><p class="nota">A música é gerada no navegador. Ao começar, o app ouve o ambiente por 2 s (pede o microfone) e ajusta o volume para ~10% acima do ruído; use o controle acima para afinar.</p></details>
 </section>
-
-<section id="p3" hidden>
-<div class="card"><strong>Conta e sincronização</strong>
-<p class="nota" id="cs">Sem conta: seus dados ficam só neste aparelho.</p>
-<div id="cform"><div class="cfg"><label for="ce">E-mail</label><input id="ce" type="text" autocomplete="email"><label for="cp">Senha</label><input id="cp" type="password" autocomplete="current-password"></div>
-<p><button class="btn" id="cin">Entrar</button> <button class="btn sec" id="ccr">Criar conta</button></p></div>
-<div id="cok" hidden><p id="cu"></p>
-<label><input type="checkbox" data-k="nuvem"> Guardar meu histórico de leituras na nuvem (sem áudio)</label>
-<p class="nota">Para menores de idade, só com autorização do responsável. Quem for convidado para o seu espaço poderá ver este histórico. Os áudios nunca saem do aparelho.</p>
-<p><button class="btn sec" id="csy">Sincronizar agora</button> <button class="btn sec" id="cco">Convidar alguém</button> <button class="btn sec" id="csa">Sair</button></p>
-<input id="cl" type="text" readonly hidden aria-label="Link de convite" style="width:100%"></div>
-<p class="nota" id="cm"></p></div>
-</section>
 </main>
 
-<script type="module">
+<script>
 const $=id=>document.getElementById(id);
 const ld=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
 const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const cfg=Object.assign({n:10,keep:3,zl:-30,zy:-15,zr:-6,gtema:'Variado',gmodo:'min',gval:1,gnivel:'Jovem e adulto',gtom:'Neutro',gfoco:'',gerr:false,gia:false,gurl:'',nuvem:false,ins:4,segOn:false,seg:4,sol:7,paOn:false,pa:2,ciclos:6,voz:true,mus:true,vm:100},ld('fono_cfg',{}));
+const cfg=Object.assign({n:10,keep:3,zl:-30,zy:-15,zr:-6,gtema:'Variado',gmodo:'min',gval:1,ins:4,segOn:false,seg:4,sol:7,paOn:false,pa:2,ciclos:6,voz:true,mus:true,vm:100},ld('fono_cfg',{}));
 let hist=ld('fono_hist',[]);
 const DEF='O sol nasceu devagar sobre a cidade. Os pássaros começaram a cantar, e todo mundo acordou com um sorriso. Era o começo de um novo dia.';
 let texto=ld('fono_txt',DEF);
-function aba(n){[1,2,3].forEach(i=>{$('p'+i).hidden=n!==i;$('t'+i).setAttribute('aria-selected',n===i)})}
-[1,2,3].forEach(i=>$('t'+i).onclick=()=>aba(i));
+function aba(n){$('p1').hidden=n!==1;$('p2').hidden=n!==2;$('t1').setAttribute('aria-selected',n===1);$('t2').setAttribute('aria-selected',n===2)}
+$('t1').onclick=()=>aba(1);$('t2').onclick=()=>aba(2);
 document.querySelectorAll('[data-k]').forEach(el=>{
   const k=el.dataset.k;if(el.type==='checkbox')el.checked=!!cfg[k];else el.value=cfg[k];
-  el.addEventListener('input',()=>{cfg[k]=el.type==='checkbox'?el.checked:el.tagName==='SELECT'||el.type==='text'?el.value:parseFloat(el.value)||0;sv('fono_cfg',cfg);
-    if(k==='vm'&&mg)mg.gain.value=base*cfg.vm/100;if(k==='nuvem'&&cfg.nuvem)sincroniza();if(k==='n')grafico();if(k==='keep')listaAudio();if(k[0]==='z'){medidor(-60);histVol()}});
+  el.addEventListener('input',()=>{cfg[k]=el.type==='checkbox'?el.checked:el.tagName==='SELECT'?el.value:parseFloat(el.value)||0;sv('fono_cfg',cfg);
+    if(k==='vm'&&mg)mg.gain.value=base*cfg.vm/100;if(k==='n')grafico();if(k==='keep')listaAudio();if(k[0]==='z'){medidor(-60);histVol()}});
 });
 
 // ---- texto ----
@@ -183,25 +164,9 @@ function gerar(){
   for(const p of pool){for(const f of fras(p)){out.push(f);n+=pals(f).length;if(n>=alvo)break}if(n>=alvo)break}
   return{t:out.join(' '),n,base,curto:n<alvo*0.9};
 }
-$('gt').onclick=async()=>{
-  const v=hist.map(e=>e.ppm).filter(Boolean),base=v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):130;
-  const q=cfg.gval>0?cfg.gval:1,alvo=Math.round(cfg.gmodo==='min'?q*base:q),min=n=>(n/base).toFixed(1).replace('.',',');
-  if(cfg.gia&&cfg.gurl){
-    $('gi').textContent='Gerando com IA...';$('gt').disabled=true;
-    try{
-      const erros=cfg.gerr?Object.entries(ld('fono_err',{})).sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>e[0]):[];
-      const r=await fetch(cfg.gurl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tema:cfg.gtema,palavras:alvo,nivel:cfg.gnivel,tom:cfg.gtom,foco:cfg.gfoco||'',dificeis:erros})});
-      const d=await r.json();if(!r.ok||!d.texto)throw new Error(d.erro||'falha');
-      $('ta').value=d.texto;$('ut').onclick();const n=pals(d.texto).length;
-      $('gi').textContent=`Texto gerado com IA: ${n} palavras (cerca de ${min(n)} min no ritmo de ${base} palavras/min).`;
-    }catch(e){
-      const r=gerar();$('ta').value=r.t;$('ut').onclick();
-      $('gi').textContent='Não consegui usar a IA agora ('+(e.message||'erro')+'). Gerei do banco de textos: '+r.n+' palavras.';
-    }
-    $('gt').disabled=false;return;
-  }
+$('gt').onclick=()=>{
   const r=gerar();$('ta').value=r.t;$('ut').onclick();
-  $('gi').textContent=`Texto gerado: ${r.n} palavras (cerca de ${min(r.n)} min no ritmo de ${r.base} palavras/min).`+(r.curto?' O banco deste tema acabou; use "Variado" para textos maiores.':'');
+  $('gi').textContent=`Texto gerado: ${r.n} palavras (cerca de ${(r.n/r.base).toFixed(1).replace('.',',')} min no ritmo de ${r.base} palavras/min).`+(r.curto?' O banco deste tema acabou; use "Variado" para textos maiores.':'');
 };
 function compara(fala){
   const w=pals(texto),tn=w.map(norm),sp=fala.split(/\s+/).map(norm).filter(Boolean),n=w.length,m=sp.length;
@@ -274,11 +239,10 @@ function analisa(){
   if(ant&&(r.expr>ant.expr||r.pausas>ant.pausas))fb='Você evoluiu em relação à última vez. '+fb;
   $('fb').textContent=fb;$('res').hidden=false;
   if(cmp){mostra(cmp.ok);
-    const em=ld('fono_err',{});pals(texto).forEach((w,i)=>{if(cmp.ok[i]===false){const c=w.replace(/[^\p{L}\p{N}-]/gu,'').toLowerCase();if(c.length>2)em[c]=(em[c]||0)+1}});sv('fono_err',em);
     $('cb').innerHTML=[['Palavras no texto',cmp.n],['Palavras lidas certas',cmp.certas],['Faltaram ou foram trocadas',cmp.n-cmp.certas],['Palavras a mais',Math.max(0,cmp.m-cmp.certas)],['Frases no texto',cmp.nf],['Frases lidas corretamente',cmp.fr]].map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join('');
     $('cn').textContent='Em vermelho no texto: o que não bateu com a sua leitura.'}
   else{$('cb').innerHTML='';$('cn').textContent='A comparação com o texto precisa do reconhecimento de fala (Chrome, abrindo a página por https).'}
-  $('cmp').hidden=false;$('st').textContent='Pronto. Veja o resultado abaixo.';grafico();histo();if(appD&&cfg.nuvem)sincroniza();
+  $('cmp').hidden=false;$('st').textContent='Pronto. Veja o resultado abaixo.';grafico();histo();
 }
 $('rec').onclick=()=>gravando?parar():iniciar();
 
@@ -331,7 +295,7 @@ function histo(){
   $('hb').innerHTML=hist.slice().reverse().map(e=>`<tr><td>${new Date(e.t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</td><td>${esc(e.tx||'—')}</td><td>${fmt(e.dur)}</td><td>${fmt(e.ppm)}</td><td>${fmt(e.sps)}</td><td>${fmt(e.pausas)}</td><td>${fmt(e.expr)}</td><td>${fmt(e.vdb)}</td><td>${fmt(e.pc)}</td></tr>`).join('');
   $('hn').textContent=hist.length+' leitura(s) guardadas (até 300).';
 }
-$('hclr').onclick=async()=>{if(confirm('Apagar todo o histórico de leituras'+(appD&&cfg.nuvem?' (inclusive na nuvem)':'')+'?')){hist=[];sv('fono_hist',hist);sv('fono_err',{});histo();grafico();if(appD&&cfg.nuvem){try{await appD.salvar('historico',[]);await appD.salvar('erros',[])}catch(e){}}}};
+$('hclr').onclick=()=>{if(confirm('Apagar todo o histórico de leituras?')){hist=[];sv('fono_hist',hist);histo();grafico()}};
 $('sbt').onclick=()=>{const h=($('sob').hidden=!$('sob').hidden);$('sbt').setAttribute('aria-expanded',String(!h))};
 histo();
 
@@ -385,56 +349,6 @@ $('rgo').onclick=async()=>{
   if(cfg.mus)await musica();
   passo(fases(),0,0);
 };
-
-// ---- conta e sincronização (fenix-core) ----
-// Endereço do fenix-core.js (nome fixo). Ajuste para o endereço real, uma vez só.
-const CORE_URL='./fenix-core.js';
-let core=null,authM=null,empM=null,convM=null,dbC=null,appD=null,sessao=null;
-const msgC=e=>({'auth/invalid-credential':'E-mail ou senha incorretos','auth/email-already-in-use':'Este e-mail já tem conta','auth/weak-password':'Senha fraca (mínimo de 6 caracteres)','auth/invalid-email':'E-mail inválido','auth/missing-password':'Digite a senha'}[e.code]||e.code||e.message);
-function mostraConta(){
-  $('cform').hidden=!!sessao;$('cok').hidden=!sessao;
-  $('cs').textContent=sessao?'Conectado.':'Sem conta: seus dados ficam só neste aparelho.';
-  if(sessao){$('cu').textContent=sessao.email+' ('+sessao.papel+')';$('cco').hidden=sessao.papel!=='dono'}
-}
-async function entrou(u){
-  if(!u){sessao=null;appD=null;mostraConta();return}
-  try{
-    let v=await empM.obterEmpresaDoUsuario(u.uid);
-    const tk=new URLSearchParams(location.search).get('convite');
-    if(!v&&tk){await convM.aceitarConvite(tk,u.uid,u.email);v=await empM.obterEmpresaDoUsuario(u.uid);history.replaceState(null,'',location.pathname)}
-    if(!v){await empM.criarEmpresa(u.uid,u.email,'Espaço de '+u.email);v=await empM.obterEmpresaDoUsuario(u.uid)}
-    sessao={uid:u.uid,email:u.email,empresaId:v.empresaId,papel:v.papel};
-    appD=core.criarModuloAppData(dbC,v.empresaId,'fenix-fono');
-    mostraConta();if(cfg.nuvem)await sincroniza();
-  }catch(e){$('cm').textContent='Não consegui abrir o seu espaço: '+(e.code||e.message)}
-}
-async function sincroniza(){
-  if(!appD||!cfg.nuvem)return;
-  try{
-    const nuv=(await appD.carregar('historico'))||[],mapa=new Map();
-    [...nuv,...hist].forEach(e=>mapa.set(e.t,e));
-    hist=[...mapa.values()].sort((a,b)=>a.t-b.t).slice(-300);sv('fono_hist',hist);
-    if(!(await appD.salvar('historico',hist)))throw new Error('sem permissão para salvar (confira as regras do Firestore)');
-    const en=(await appD.carregar('erros'))||[],em=ld('fono_err',{});
-    en.forEach(x=>{em[x.w]=Math.max(em[x.w]||0,x.c)});sv('fono_err',em);
-    await appD.salvar('erros',Object.entries(em).map(([w,c])=>({w,c})));
-    histo();grafico();$('cm').textContent='Sincronizado às '+new Date().toLocaleTimeString('pt-BR');
-  }catch(e){$('cm').textContent='Falha ao sincronizar: '+(e.code||e.message)}
-}
-$('cin').onclick=async()=>{if(!authM)return;try{await authM.entrar($('ce').value.trim(),$('cp').value);$('cm').textContent=''}catch(e){$('cm').textContent=msgC(e)}};
-$('ccr').onclick=async()=>{if(!authM)return;try{await authM.criarConta($('ce').value.trim(),$('cp').value);$('cm').textContent=''}catch(e){$('cm').textContent=msgC(e)}};
-$('csa').onclick=()=>authM&&authM.sair();
-$('csy').onclick=()=>{if(!cfg.nuvem){$('cm').textContent='Marque a opção de guardar o histórico na nuvem para sincronizar.';return}sincroniza()};
-$('cco').onclick=async()=>{try{const r=await convM.criarConvite(sessao.empresaId,sessao.uid,sessao.email,null);const i=$('cl');i.value=r.link;i.hidden=false;i.select();$('cm').textContent='Envie este link para a pessoa. Ela entra no seu espaço e poderá ver o histórico.'}catch(e){$('cm').textContent='Não consegui criar o convite: '+(e.code||e.message)}};
-async function iniciaCore(){
-  try{
-    core=(await import(CORE_URL)).FenixCore;core.init('fenix-fono');
-    const {app,db}=core.initFirebase();dbC=db;
-    authM=core.criarModuloAuth(app);empM=core.criarModuloEmpresas(db);convM=core.criarModuloConvites(db,location.origin+location.pathname);
-    authM.aoMudarEstado(entrou);
-  }catch(e){$('cs').textContent='Conta indisponível agora (sem conexão ou core não encontrado). O app funciona só neste aparelho.';$('cform').hidden=true}
-}
-iniciaCore();
 </script>
 </body>
 </html>
